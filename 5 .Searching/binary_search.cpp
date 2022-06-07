@@ -37,18 +37,6 @@ int binarySearch_Iterative(int arr[], int l, int r, int x)
 
     return -1;
 }
-int exponentialSearch(int arr[], int n, int x)
-{
-    if (arr[0] == x)
-        return 0;
-    int i = 1;
-    while (i <= n && arr[i] < x)
-    {
-        i *= 2;
-    }
-    return binarySearch_Recursive(arr, i / 2, min(i, n - 1), x);
-}
-
 int main()
 {
     int arr[] = {2, 3, 4, 10, 40, 50, 51, 52, 53, 55};
