@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Solver</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        .form {
+            width: 80%;
+            margin: auto;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        input {
+            width: 50%;
+        }
+
+        .grid-wrapper {
+            width: fit-content;
+            margin: auto;
+        }
+
+        p {
+            margin: 10px;
+        }
+
+        .col {
+            height: 40px;
+            width: 40px;
+            border: 1px solid grey;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .red {
+            color: rgb(163, 1, 1);
+        }
+
+        .green {
+            color: rgb(1, 163, 39);
+        }
+
+        .row {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sudoku Solver</h1>
+    <div class="form">
+        <input type="text" name="mat" class="input" id="" placeholder="Enter 81 numbers from 0 to 9"
+            value="3 0 6 5 0 8 4 0 0 5 2 0 0 0 0 0 0 0 0 8 7 0 0 0 0 3 1 0 0 3 0 1 0 0 8 0 9 0 0 8 6 3 0 0 5 0 5 0 0 9 0 6 0 0 1 3 0 0 0 0 2 5 0 0 0 0 0 0 0 0 7 4 0 0 5 2 0 6 3 0 0">
+        <button type="submit" class="sub-btn">Submit</button>
+        <button type="submit" class="sol-btn">Solve</button>
+    </div>
+
+    <div class="grid-wrapper">
+
+    </div>
+    <script>
+        {
+            const wrapper = document.querySelector('.grid-wrapper');
+            const submitBtn = document.querySelector('.sub-btn');
+            const solveBtn = document.querySelector('.sol-btn');
+            const input = document.querySelector('.input');
+            const n = 9;
+            var matrix = [];
+            var htmlElements = [];
+
+            const createGrid = () => {
+                for (let i = 0; i < n; i++) {
+                    let row = document.createElement('div');
+                    row.classList.add('row');
+                    let rowEl = [];
+                    for (let j = 0; j < n; j++) {
+                        let col = document.createElement('div');
+                        let p = document.createElement('p');
+                        col.classList.add('col');
+                        col.appendChild(p);
+                        row.appendChild(col);
+                        rowEl.push(col);
+                    }
+                    wrapper.appendChild(row);
+                    htmlElements.push(rowEl);
+                }
+            }
+
+            createGrid();
+            console.log(htmlElements)
+
+            const draw = (first) => {
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        if (matrix[i][j] != 0) {
+                            const box = htmlElements[i][j];
+                            box.firstChild.innerHTML = matrix[i][j];
+                            if (first) {
+                                box.classList.add('red')
+                                continue;
+                            }
+                            if (!box.classList.contains('red'))
+                                box.classList.add('green')
+                        }
+
+                    }
+                }
+            }
+
+            function isSafe(row, col, num, grid) {
+                for (let i = 0; i < n; i++) {
+                    if (grid[i][col] == num || grid[row][i] == num)
+                        return false;
+                }
+
+                var sq = 3;
+                var rs = row - row % sq;
+                var cs = col - col % sq;
+
+                for (let i = rs; i < sq + rs; i++)
+                    for (let j = cs; j < sq + cs; j++)
+                        if (grid[i][j] == num)
+                            return false;
+
+                return true;
+            }
+
+            function solveRec(grid) {
+                var i, j;
+                var row = -1, col = -1;
+                let isEmpty = true;
+                for (i = 0; i < n; i++) {
+                    for (j = 0; j < n; j++) {
+                        if (grid[i][j] == 0) {
+                            isEmpty = false;
+                            break;
+                        }
+                    }
+                    if (!isEmpty) {
+                        break;
+                    }
+                }
+
+                if (isEmpty == true) {
+                    return true;
+                }
+
+                for (let k = 1; k <= n; k++) {
+
+                    if (isSafe(i, j, k, grid) == true) {
+                        grid[i][j] = k;
+                        if (solveRec(grid) == true)
+                            return true;
+                        grid[i][j] = 0;
+                    }
+                }
+                return false;
+            }
+
+            const solve = () => {
+                if (solveRec(matrix) == true) {
+                    console.log('Ok')
+                }
+                else {
+                    alert('No solution exists!');
+                }
+            }
+
+            submitBtn.addEventListener('click', () => {
+
+                matrix = [];
+
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        const box = htmlElements[i][j];
+                        box.firstChild.innerHTML = "";
+                    }
+                }
+
+                const str = input.value;
+
+                if (str.length < 81) {
+                    window.alert("please enter 81 numbers, from 0 to 9 only!");
+                    return
+                }
+
+                let arr = str.split(' ');
+                let intArr = [];
+
+                for (let i = 0; i < arr.length; i++) {
+                    intArr.push(parseInt(arr[i]));
+                    if (arr[i] < 0 || arr[i] > 9) {
+                        window.alert("please enter 81 numbers, from 0 to 9 only!");
+                        return
+                    }
+                }
+
+                for (let i = 0; i < n; i++) {
+                    let row = [];
+                    for (let j = 0; j < n; j++) {
+                        row.push(intArr[n * i + j]);
+                    }
+                    matrix.push(row);
+                }
+
+                console.log(matrix);
+                draw(true);
+            })
+
+            solveBtn.addEventListener('click', () => {
+                solve();
+                draw(false);
+            })
+        }
+    </script>
+</body>
+
+</html>
