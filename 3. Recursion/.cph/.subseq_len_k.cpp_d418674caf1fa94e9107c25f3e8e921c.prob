@@ -1,0 +1,1 @@
+{"name":"Local: subseq_len_k","url":"d:\\DSA\\3. Recursion\\subseq_len_k.cpp","tests":[{"id":1661433629361,"input":"1\n1 3\nababaaba","output":"abb"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\DSA\\3. Recursion\\subseq_len_k.cpp","group":"local","local":true}
